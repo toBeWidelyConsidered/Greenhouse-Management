@@ -10,4 +10,6 @@ sigma_sq_h = 20
 Int = 10
 R_max_co2 = 40
 k_m = 10
-co2 = 10
+co2 = 40
+co2_const = 400
+co2_ampl = 100
