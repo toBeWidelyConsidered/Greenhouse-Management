@@ -3,13 +3,21 @@ import matplotlib.pyplot as plt
 data = {}
 plt.figure(figsize=(9,6))
 # Сбор данных ключ-значение из файла
+
+def isDigit(x):
+    try:
+        float(x)
+        return True
+    except ValueError:
+        return False
+
 def get_data(data):
     with open('crop1.txt') as f:
         for line in f:
             line_list = line.split()
-            if line_list and line_list[-1].isdigit():
+            if line_list and isDigit(line_list[-1]):
                 interface = line_list[0]
-                address = int(line_list[-1])
+                address = float(line_list[-1])
                 data[interface] = address
 get_data(data)
 print(data)
@@ -27,13 +35,14 @@ CO2_graph=[]
 
 for i in range(1, T+1, step): T_graph.append(i)
 while t<=T:
-    co2_level = data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * t / 12)
+    co2_level = data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi)
     CO2_graph.append(co2_level)
     I_graph.append(data['Int'])
-    R = ((data.get('R_max_t')*np.e**(-((data.get('Temp')-data.get('T_opt'))**2)/(2*data.get('sigma_sq_t')))) *
-         (data.get('R_max_h')*np.e**(-((data.get('Temp')-data.get('H_opt'))**2)/(2*data.get('sigma_sq_h')))) *
+    R = (((data.get('R_max_t')*np.e**(-((data.get('Temp')-data.get('T_opt'))**2)/(2*data.get('sigma_sq_t')))) *
+         (data.get('R_max_h')*np.e**(-((data.get('H_const')-data.get('H_soil'))**2)/(2*data.get('sigma_sq_h')))) *
           (data.get('R_max_i')*data.get('Int')/(data.get('k')+data.get('Int'))) *
-         (data.get('R_max_co2')*co2_level/(data.get('k_m')+co2_level)))
+         (data.get('R_max_co2')*co2_level/(data.get('k_m')+co2_level))) *
+         (data.get('R_max_h')*np.e**(-((data.get('H_const')-data.get('H_air'))**2)/(2*data.get('sigma_sq_h')))))
     M = M + R * step
     M_graph.append(M)
     if t%12 == 0: # смена дня и ночи
