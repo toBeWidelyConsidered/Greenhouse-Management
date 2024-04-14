@@ -30,28 +30,28 @@ print(data)
 
 
 # Функции
-def gauss_func(x_opt, sigma_sq, r_max, x_const):
-    return r_max * np.e ** (-((x_const - x_opt) ** 2) / (2 * sigma_sq))
+def gauss_func(x_opt, sigma_sq, x_const):
+    return np.e ** (-((x_const - x_opt) ** 2) / (2 * sigma_sq))
 
 
 def GR_temp():
-    return gauss_func(data['T_opt'], data['sigma_sq_t'], data['R_max_t'], data['Temp'])
+    return gauss_func(data['T_opt'], data['sigma_sq_t'], data['Temp'])
 
 
 def GR_H_soil():
-    return gauss_func(data['H_soil'], data['sigma_sq_h'], data['R_max_h'], data['H_const'])
+    return gauss_func(data['H_soil'], data['sigma_sq_h'], data['H_const'])
 
 
 def GR_H_air():
-    return gauss_func(data['H_air'], data['sigma_sq_h'], data['R_max_h'], data['H_const'])
+    return gauss_func(data['H_air'], data['sigma_sq_h'], data['H_const'])
 
 
 def GR_Int():
-    return data['R_max_i'] * data['Int'] / (data['k'] + data['Int'])
+    return data['Int'] / (data['k'] + data['Int'])
 
 
 def GR_co2(co2_level):
-    return data['R_max_co2'] * co2_level / (data['k_m'] + co2_level)
+    return co2_level / (data['k_m'] + co2_level)
 
 
 def show_graph():
@@ -81,21 +81,22 @@ M_graph = []
 T_graph = []
 I_graph = []
 CO2_graph = []
+const_int = data['Int']
 
 for i in range(1, T + 1, step): T_graph.append(i)
 while t <= T:
     co2_level = data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi)
     CO2_graph.append(co2_level)
     I_graph.append(data['Int'])
-    R = GR_temp() * GR_H_soil() * GR_H_air() * GR_Int() * GR_co2(co2_level)
+    R = data['R_max'] * (GR_temp() + GR_H_soil() + GR_H_air() + GR_Int() + GR_co2(co2_level))
     M = M + R * step
     M_graph.append(M)
     if t % 12 == 0:  # смена дня и ночи
         if daytime == 1:
-            data['Int'] /= 2  # ранее 1(день) --> уменьшаем интенсивность
+            data['Int'] = 0  # ранее 1(день) --> уменьшаем интенсивность
             daytime = 0
         else:
-            data['Int'] *= 2  # ранее 0(ночь) --> увеличиваем интенсивность
+            data['Int'] = const_int  # ранее 0(ночь) --> увеличиваем интенсивность
             daytime = 1
     t += step
 show_graph()
