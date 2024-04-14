@@ -1,16 +1,13 @@
 T_opt = 20
-R_max_t = 0.2
+R_max = 0.1
 sigma_sq_t = 36
 Temp = 10
 H_const = 50
-R_max_i = 0.1
 k = 100
 H_soil = 60
 H_air = 70
-R_max_h = 0.1
 sigma_sq_h = 49
 Int = 10
-R_max_co2 = 0.2
 k_m = 200
 co2 = 40
 co2_const = 400
