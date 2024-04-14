@@ -59,7 +59,7 @@ def show_graph():
     plt.plot(T_graph, M_graph, label='M')
     plt.plot(T_graph, I_graph, label='Int')
     plt.plot(T_graph, CO2_graph, label='Co2')
-    plt.xlabel('Период прогнозирования T, сек', fontsize=10)
+    plt.xlabel('Период прогнозирования T, ч', fontsize=10)
     plt.tight_layout()
     plt.legend()
     plt.show()
