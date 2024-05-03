@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 data = {}
 
+
 # Сбор данных ключ-значение из файла
 
 def isDigit(x):
@@ -43,34 +44,51 @@ def GR_H_soil():
 def GR_H_air():
     return gauss_func(data['H_air'], data['sigma_sq_h'], data['H_const'])
 
+
 def GR_Int():
     return data['Int'] / (data['k'] + data['Int']) + alpha
 
+
 def get_co2_level(t):
     return data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi)
+
+
 def get_co2_level2(t, co2_level):
-    if t%72==0: #каждый 3ий день
-        return co2_level*1.75
-    elif t%120==0:  return co2_level*0.5 #каждый 5 день
-    else: return co2_level
+    if t % 72 == 0:  # каждый 3ий день
+        return co2_level * 1.75
+    elif t % 120 == 0:
+        return co2_level * 0.5  # каждый 5 день
+    else:
+        return co2_level
 
 
-def get_co2_level3(t, control):
-    return data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi) +control
+def get_co2_level3(t, daytime, control):
+    if t % 12 == 1 and daytime == 1:
+        return data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi) + control
+    elif t % 12 == 11 and daytime == 1:
+        return data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi) - control
+    else:
+        return data.get('co2_const') + data.get('co2_ampl') * np.sin(np.pi * 2 * t / 24 + np.pi)
+
 
 def GR_co2(co2_level):
     return co2_level / (data['k_m'] + co2_level)
 
+
 def get_R(co2_level):
     return data['R_max'] * (GR_temp() * GR_H_soil() * GR_H_air() * GR_Int() * GR_co2(co2_level))
+
+
 def get_R2(co2_level):
     return data['R_max'] * (GR_temp() + GR_H_soil() + GR_H_air() + GR_Int() + GR_co2(co2_level))
+
+
 def get_R3(co2_level):
     return data['R_max'] * (GR_temp() * GR_H_soil() * GR_H_air() + GR_Int() * GR_co2(co2_level))
 
 
 def show_graph():
-    plt.figure(figsize=(9,6))
+    plt.figure(figsize=(9, 6))
     plt.subplot(2, 2, 1)
     plt.grid()
     plt.plot(T_graph, M_graph, label='M', color='coral')
@@ -114,7 +132,7 @@ M = 0
 co2_level = data['co2_const']
 daytime = 1  # 1 -- день, 0 -- ночь
 alpha = 0.01
-control = 0
+control = 100
 
 M_graph = []
 T_graph = []
