@@ -25,7 +25,7 @@ def get_data(data):
 
 
 get_data(data)
-print(data)
+print(pd.Series(data))
 
 
 # Функции
@@ -90,7 +90,6 @@ def get_R3(co2_level):
 def show_graph():
     collected_data = {"M": M_graph, "R": R_graph, "I": I_graph, "CO_2": CO2_graph}
     table = pd.DataFrame(collected_data, index=T_graph)
-    print(table)
 
     fig = plt.figure(figsize=[9, 7])
     fig.suptitle('Графики', fontsize=10, fontweight='bold')
