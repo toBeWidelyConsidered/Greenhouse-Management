@@ -88,33 +88,82 @@ def get_R3(co2_level):
 
 
 def show_graph():
-    plt.figure(figsize=(9, 6))
+    collected_data = {"M": M_graph, "R": R_graph, "I": I_graph, "CO_2": CO2_graph}
+    table = pd.DataFrame(collected_data, index=T_graph)
+    print(table)
+
+    fig = plt.figure(figsize=[9, 7])
+    fig.suptitle('Графики', fontsize=10, fontweight='bold')
+    plt.subplot(4, 1, 1)
+    plt.plot(table["M"], label="M", color="tomato")
+    plt.grid(alpha=0.5)
+    plt.legend()
+
+    plt.subplot(4, 1, 2)
+    plt.plot(table["R"], label="R", color="darkgreen")
+    plt.grid(alpha=0.5)
+    plt.legend()
+
+    plt.subplot(4, 1, 3)
+    plt.plot(table["I"], label="I", color="sandybrown")
+    plt.grid(alpha=0.5)
+    plt.legend()
+
+    plt.subplot(4, 1, 4)
+    plt.plot(table["CO_2"], label="CO_2", color="dodgerblue")
+    plt.grid(alpha=0.5)
+    plt.legend()
+    plt.xlabel('Период прогнозирования T, ч', fontsize=10, fontweight='bold')
+    plt.tight_layout()
+    plt.show()
+
+def show_common_graph():
+    fig1 = plt.figure(figsize=[9, 7])
+    fig1.suptitle('Графики', fontsize=10, fontweight='bold')
     plt.subplot(2, 2, 1)
     plt.grid()
-    plt.plot(T_graph, M_graph, label='M', color='coral')
-    plt.xlabel('Период прогнозирования T, ч', fontsize=10)
+    plt.title('Рост растений в зависимости от температуры', fontsize=10)
+    plt.xlabel('Температура', fontsize=10)
+    plt.ylabel('Рост', fontsize=10)
+
+    x = np.linspace(0, data['T_opt'] * 2, 100)
     plt.tight_layout()
+    plt.plot(x, data['R_max'] * np.e ** (-((x - data['T_opt']) ** 2) / (2 * data['sigma_sq_t'])), color='coral',
+             label='T')
     plt.legend()
 
     plt.subplot(2, 2, 2)
     plt.grid()
-    plt.plot(T_graph, R_graph, label='R', color='coral')
-    plt.xlabel('Период прогнозирования T, ч', fontsize=10)
+    plt.title('Рост растений в зависимости от влажности', fontsize=10)
+    plt.xlabel('Влажность', fontsize=10)
+    plt.ylabel('Рост', fontsize=10)
+
+    x = np.linspace(0, data['H_const'] * 2, 100)
     plt.tight_layout()
+    plt.plot(x, data['R_max'] * np.e ** (-((x - data['H_soil']) ** 2) / (2 * data['sigma_sq_h'])), color='coral',
+             label='H_soil')
+    plt.plot(x, data['R_max'] * np.e ** (-((x - data['H_air']) ** 2) / (2 * data['sigma_sq_h'])), color='maroon',
+             label='H_air')
     plt.legend()
 
     plt.subplot(2, 2, 3)
     plt.grid()
-    plt.plot(T_graph, I_graph, label='Int', color='coral')
-    plt.xlabel('Период прогнозирования T, ч', fontsize=10)
+    plt.title('Рост растений в зависимости от интенсивности света', fontsize=10)
+    plt.xlabel('Интенсивность', fontsize=10)
+    plt.ylabel('Рост', fontsize=10)
+    x = np.linspace(0, data['Int'], 100)
     plt.tight_layout()
+    plt.plot(x, data['R_max'] * x / (data['k'] + x), color='coral', label='I')
     plt.legend()
 
     plt.subplot(2, 2, 4)
     plt.grid()
-    plt.plot(T_graph, CO2_graph, label='Co2', color='coral')
-    plt.xlabel('Период прогнозирования T, ч', fontsize=10)
+    plt.title('Рост растений в зависимости от концентрации $Co_2$', fontsize=10)
+    plt.xlabel('Концентрация $Co_2$', fontsize=10)
+    plt.ylabel('Рост', fontsize=10)
+    x = np.linspace(0, data['co2_const'], 100)
     plt.tight_layout()
+    plt.plot(x, data['R_max'] * x / (data['k_m'] + x), color='coral', label='CO_2')
     plt.legend()
     plt.show()
 
@@ -159,3 +208,4 @@ while t <= T:
             daytime = 1
     t += step
 show_graph()
+show_common_graph()
