@@ -1,7 +1,7 @@
-T_opt = 295
+T_opt = 22
 R_max = 0.1
 sigma_sq_t = 36
-Temp = 300
+Temp = 27
 H_const = 50
 k = 100
 H_soil = 60
